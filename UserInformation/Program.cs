@@ -1,0 +1,39 @@
+using Microsoft.EntityFrameworkCore;
+using UserInformation.Models;
+using UserInformation.Repository;
+using UserInformation.Repository.Interface;
+using UserInformation.Services;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("TheString")));
+builder.Services.AddScoped<IStudentRepository,SqlStudentRepository>();
+builder.Services.AddScoped<ISave,SaveRepository>();
+
+builder.Services.AddTransient<StudentServices>();
+
+// Add services to the container.
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
